@@ -18,4 +18,4 @@ npm run dev
 curl -x GET http://localhost:3000/send-email
 ```
 
-[result](exampleresult.png)
+[result](exampleresult.PNG)
