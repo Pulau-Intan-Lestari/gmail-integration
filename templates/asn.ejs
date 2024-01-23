@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- You may want to link your own CSS file here -->
+    <!-- <link rel="stylesheet" type="text/css" href="/css/a4.css" /> -->
+    <style>
+      .row {
+        display: flex;
+        justify-content: space-between;
+      }
+      .center-row {
+        display: flex;
+        justify-content: center;
+      }
+      .start-row {
+        display: flex;
+        justify-content: start;
+      }
+      .end-row {
+        display: flex;
+        justify-content: end;
+      }
+      .column {
+        flex: 1;
+      }
+      .column-16 {
+        flex: 16;
+      }
+      .column-8 {
+        flex: 8;
+      }
+      .table-bordered {
+        border-collapse: collapse;
+      }
+      .table-bordered > tr, td, th {
+        border: 1px solid;
+        padding: 8px;
+      }
+      /* th {
+        padding: 10px;
+      } */
+      .grid-container > div {
+        font-size: 18px;
+      }
+      hr.solid {
+        border-top: 2px solid #bbb;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      style="border: 2px solid #000; height: 180px; padding: 10px"
+    >
+      <img
+        src="<%= host %>/images/logo.png"
+        style="height: 80px; position: absolute; top: 30px; left: 30px"
+      />
+      <p
+        style="
+          font-weight: bold;
+          text-align: right;
+          margin-right: 5px;
+          position: absolute;
+          top: 30px;
+          right: 20px;
+        "
+      >
+        FORM-PIL-PUR-005 REV.00
+      </p>
+      <div style="height: 100px"></div>
+      <div class="center-row">
+        <p
+          style="
+            font-weight: bold;
+            text-align: center;
+            font-size: 20px;
+            margin: 0;
+            margin-bottom: 5px;
+          "
+        >
+          Advance Shipment Notice (ASN)
+        </p>
+      </div>
+      <!-- <div class="center-row">
+        <p style="font-weight: 600; text-align: center; font-size: 16px">
+          NO: <%= asnNumber %>
+        </p>
+      </div> -->
+    </div>
+
+    <div
+      style="
+        border: 2px solid #000;
+        border-top: none;
+        height: 960px;
+        padding: 10px;
+      "
+    >
+      <div>
+        <table class="table-bordered" style="width: 100%;">
+          <tr>
+            <th>No</th>
+            <th>Business Partner</th>
+            <th>ASN Number</th>
+            <th>Expected Arrivals Date</th>
+            <th>QR Code</th>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td><%= supplier %></td>
+            <td><%= batch %></td>
+            <td><%= shipmentDate %></td>
+            <td><img src="<%= qrcodeHash %>" /></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div style="height: 40px"></div>
+    <div class="start-row">
+      <p
+        style="font-weight: bold; text-align: left; font-size: 14px; margin: 0"
+      >
+        PT Pulau Intan Lestari
+      </p>
+    </div>
+    <div class="start-row">
+      <p
+        style="font-weight: bold; text-align: left; font-size: 14px; margin: 0"
+      >
+        Jalan Interchange Tol Dawuan No.8, Central Dawuan, Cikampek, Karawang,
+        West Java 41373
+      </p>
+    </div>
+    <div class="start-row">
+      <p
+        style="font-weight: bold; text-align: left; font-size: 14px; margin: 0"
+      >
+        (0264) 310125
+      </p>
+    </div>
+  </body>
+</html>

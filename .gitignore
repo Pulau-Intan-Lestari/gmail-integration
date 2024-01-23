@@ -1,0 +1,9 @@
+node_modules
+.env
+db2-client
+bull/db2-client
+dist
+pdf/
+signature
+photo
+docker

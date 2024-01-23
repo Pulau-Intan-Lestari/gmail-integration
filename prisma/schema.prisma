@@ -1,0 +1,183 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+  binaryTargets   = ["native", "windows"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["db", "public"]
+}
+
+model post {
+  id      Int     @id
+  post    String
+  comment String? @db.VarChar(255)
+
+  @@index([post])
+  @@schema("public")
+}
+
+model sso_integrations {
+  id                Int        @id(map: "PK__sso_inte__3213E83F61D608A9") @default(autoincrement())
+  id_sso_users      Int?
+  account_name      String?    @db.VarChar(255)
+  account_email     String?    @db.VarChar(255)
+  type_integrations String?    @db.VarChar(255)
+  id_token          String?    @db.VarChar(255)
+  token_type        String?    @db.VarChar(255)
+  expiry_date       String?    @db.VarChar(255)
+  access_token      String?    @db.VarChar(255)
+  refresh_token     String?    @db.VarChar(255)
+  sso_users         sso_users? @relation(fields: [id_sso_users], references: [id], onDelete: Cascade, map: "FK__sso_integ__id_ss__1F98B2C1")
+
+  @@index([account_email], map: "idx_sso_integrations_account_email")
+  @@index([account_name], map: "idx_sso_integrations_account_name")
+  @@index([id_sso_users], map: "idx_sso_integrations_id_sso_users")
+  @@index([type_integrations], map: "idx_sso_integrations_type_integrations")
+  @@schema("public")
+}
+
+model sso_logs {
+  id         Int       @id(map: "PK__sso_logs__3213E83F86A1D64E") @default(autoincrement())
+  log_name   String?   @db.VarChar(255)
+  url        String?   @db.VarChar(255)
+  action     String?   @db.VarChar(255)
+  input      String?   @db.VarChar(255)
+  output     String?   @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([action], map: "idx_sso_logs_log_action")
+  @@index([log_name], map: "idx_sso_logs_log_name")
+  @@index([url], map: "idx_sso_logs_log_url")
+  @@schema("public")
+}
+
+model sso_permissions {
+  id                     Int                    @id(map: "PK__sso_perm__3213E83F84871E97") @default(autoincrement())
+  permission_key         String?                @unique(map: "UQ__sso_perm__9E2779BD776251C5") @db.VarChar(255)
+  permission_name        String?                @db.VarChar(255)
+  permission_description String?                @db.VarChar(255)
+  created_at             DateTime?              @db.Timestamp(6)
+  updated_at             DateTime?              @default(now()) @db.Timestamp(6)
+  sso_role_permissions   sso_role_permissions[]
+  sso_user_permissions   sso_user_permissions[]
+
+  @@index([permission_key], map: "idx_sso_permissions_permission_key")
+  @@index([permission_name], map: "idx_sso_permissions_permission_name")
+  @@schema("public")
+}
+
+model sso_platforms {
+  id                            Int                             @id(map: "PK__sso_plat__3213E83FA698D4C5") @default(autoincrement())
+  name                          String?                         @db.VarChar(255)
+  description                   String?                         @db.VarChar(255)
+  redirect_url                  String?                         @db.VarChar(255)
+  client_id                     String?                         @unique @db.VarChar(255)
+  client_secret                 String?                         @db.VarChar(255)
+  created_by                    Int?
+  updated_by                    Int?
+  created_at                    DateTime?                       @default(now()) @db.Timestamp(6)
+  updated_at                    DateTime?                       @default(now()) @db.Timestamp(6)
+  platform_type                 String?                         @db.VarChar(60)
+  sso_users                     sso_users?                      @relation(fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sso_user_roles_platform_pivot sso_user_roles_platform_pivot[]
+
+  @@index([client_id], map: "idx_sso_platforms_client_id")
+  @@index([client_secret], map: "idx_sso_platforms_client_secret")
+  @@index([name], map: "idx_sso_platforms_name")
+  @@schema("public")
+}
+
+model sso_role_permissions {
+  id                 Int              @id(map: "sso_role_permissions_id") @default(autoincrement())
+  id_sso_role        Int?
+  id_sso_permissions Int?
+  created_at         DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?        @default(now()) @db.Timestamp(6)
+  sso_permissions    sso_permissions? @relation(fields: [id_sso_permissions], references: [id])
+  sso_roles          sso_roles?       @relation(fields: [id_sso_role], references: [id])
+
+  @@index([id_sso_permissions])
+  @@index([id_sso_role])
+  @@schema("public")
+}
+
+model sso_roles {
+  id                            Int                             @id(map: "PK__sso_role__3213E83F9C09D884") @default(autoincrement())
+  roles_name                    String?                         @db.VarChar(255)
+  created_at                    DateTime?                       @default(now()) @db.Timestamp(6)
+  updated_at                    DateTime?                       @default(now()) @db.Timestamp(6)
+  sso_role_permissions          sso_role_permissions[]
+  sso_user_roles_platform_pivot sso_user_roles_platform_pivot[]
+
+  @@index([roles_name], map: "idx_sso_roles_roles_name")
+  @@schema("public")
+}
+
+model sso_status_user {
+  id        Int         @id(map: "sso_status_user_id") @default(autoincrement())
+  status    String?     @db.VarChar(100)
+  sso_users sso_users[]
+
+  @@schema("public")
+}
+
+model sso_user_permissions {
+  id                 Int              @id(map: "PK__sso_user__3213E83F05511205") @default(autoincrement())
+  id_sso_users       Int?
+  id_sso_permissions Int?
+  created_at         DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?        @default(now()) @db.Timestamp(6)
+  sso_users          sso_users?       @relation(fields: [id_sso_users], references: [id], onDelete: Cascade, map: "FK__sso_user___id_ss__17036CC0")
+  sso_permissions    sso_permissions? @relation(fields: [id_sso_permissions], references: [id], onDelete: Cascade, map: "FK__sso_user___id_ss__17F790F9")
+
+  @@index([id_sso_permissions], map: "idx_sso_user_permissions_id_sso_permissions")
+  @@index([id_sso_users], map: "idx_sso_user_permissions_id_sso_users")
+  @@schema("public")
+}
+
+model sso_user_roles_platform_pivot {
+  id            Int            @id(map: "sso_user_roles_pivot_id") @default(autoincrement())
+  id_user       Int?
+  id_sso_roles  Int?
+  id_platform   Int?
+  sso_platforms sso_platforms? @relation(fields: [id_platform], references: [id])
+  sso_roles     sso_roles?     @relation(fields: [id_sso_roles], references: [id], onDelete: Cascade)
+  sso_users     sso_users?     @relation(fields: [id_user], references: [id])
+
+  @@index([id_platform])
+  @@index([id_sso_roles])
+  @@index([id_user])
+  @@schema("public")
+}
+
+model sso_users {
+  id                            Int                             @id(map: "PK__sso_user__3213E83F86A1D64E") @default(autoincrement())
+  name                          String?                         @db.VarChar(255)
+  email                         String?                         @unique(map: "UQ__sso_user__AB6E61649A5D8E7D") @db.VarChar(255)
+  password                      String?                         @db.VarChar(255)
+  id_status                     Int?
+  created_at                    DateTime?                       @default(now()) @db.Timestamp(6)
+  updated_at                    DateTime?                       @default(now()) @db.Timestamp(6)
+  last_login                    DateTime?                       @default(now()) @db.Timestamp(6)
+  last_logout                   DateTime?                       @default(now()) @db.Timestamp(6)
+  code                          String?                         @db.VarChar(255)
+  token                         String?                         @db.VarChar(255)
+  refresh_token                 String?                         @db.VarChar(255)
+  sso_integrations              sso_integrations[]
+  sso_platforms                 sso_platforms[]
+  sso_user_permissions          sso_user_permissions[]
+  sso_user_roles_platform_pivot sso_user_roles_platform_pivot[]
+  sso_status_user               sso_status_user?                @relation(fields: [id_status], references: [id])
+
+  @@index([email], map: "idx_sso_users_email")
+  @@index([name], map: "idx_sso_users_name")
+  @@index([code])
+  @@index([id_status])
+  @@index([refresh_token])
+  @@index([token])
+  @@schema("public")
+}
